@@ -1,9 +1,14 @@
 var express = require('express');
-var router = express.Router();
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('listando membros');
-});
+var Membros = require('../models/membros');
+var membroRouter = express.Router();
 
-module.exports = router;
+membroRouter.route('/').
+  get(function (req, res, next) {
+    Membros.find(function (err, membros) {
+      if (err) next(err);
+      res.json(membros);
+    })
+  });
+
+module.exports = membroRouter;

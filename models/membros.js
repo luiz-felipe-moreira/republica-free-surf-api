@@ -16,19 +16,61 @@ var membroSchema = new Schema({
       required: true
     },
     apelido: {
-      type: String,
-      default: ""
+      type: String
     },
-    //TODO Atualizar campos daqui pra baixo
-    price: {
-      type: Currency,
-      required: true
+    telefoneCelular: {
+        type: String,
+        required: true
     },
-    featured: {
-        type: Boolean,
-        default:false
+    telefoneFixo: {
+        type: String
     },
-    description: {
+    profissao: {
+        type: String,
+        required: true
+    },
+    dataNascimento: {
+        type: Date,
+        required: true
+    },
+    sexo: {
+        type: String,
+        required: true
+    },
+    grupoSanguineo: {
+        type: String,
+        required: true
+    },
+    fatorRH: {
+        type: String,
+        required: true
+    },
+    alergias: {
+        type: String
+    },
+    problemasSaude: {
+        type: String
+    },
+    nomeContatoEmergencia: {
+        type: String,
+        required: true
+    },
+    telefoneContatoEmergencia: {
+        type: String,
+        required: true
+    },
+    nivel: {
+        type: String,
+        required: true
+    },
+
+    tiposPrancha: [String],
+
+    anoComecoSurfe: {
+        type: Number,
+        required: true
+    },
+    praia: {
         type: String,
         required: true
     }
