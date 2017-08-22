@@ -8,12 +8,13 @@ var mongoose = require('mongoose');
 
 var config = require('./config');
 
-mongoose.connect(config.mongoUrl);
+mongoose.connect((process.env.MONGODB_URI || config.mongoUrl), {
+  useMongoClient: true
+});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    // we're connected!
-    console.log("Connected correctly to server");
+    console.log("Connected correctly to database server");
 });
 
 var index = require('./routes/index');
