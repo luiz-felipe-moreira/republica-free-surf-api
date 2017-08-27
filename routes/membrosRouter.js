@@ -10,7 +10,7 @@ membroRouter.route('/').
     Membros.find(function (err, membros) {
       if (err) next(err);
       res.json(membros);
-    })
+    });
   })
   
   .post(function (req, res, next) {
@@ -18,13 +18,17 @@ membroRouter.route('/').
         if (err) next(err);
         console.log('Membro criado!');
         res.json(membro);
-        // var nome = membro.nome;
-        // res.writeHead(200, {
-        //     'Content-Type': 'text/plain'
-        // });
-
-        // res.end('Adicionado membro: ' + nome);
     });
+});
+
+membroRouter.route('/:membroId').
+get(function (req, res, next) {
+  // Membros.findById(req.params.membroId, function (err, membro) {
+    Membros.findOne({'id':req.params.membroId}, function (err, membro) {
+    if (err) next(err);
+    console.log('Membro encontrado');
+    res.json(membro);
+  });
 });
 
 module.exports = membroRouter;
