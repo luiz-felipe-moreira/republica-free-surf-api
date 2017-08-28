@@ -26,6 +26,11 @@ get(function (req, res, next) {
   // Membros.findById(req.params.membroId, function (err, membro) {
     Membros.findOne({'id':req.params.membroId}, function (err, membro) {
     if (err) next(err);
+
+    console.log('Membro: ' + membro);
+    if (membro === null){
+      res.sendStatus(404);
+    }
     console.log('Membro encontrado');
     res.json(membro);
   });
