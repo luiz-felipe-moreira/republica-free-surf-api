@@ -29,7 +29,11 @@ get(function (req, res, next) {
 
     console.log('Membro: ' + membro);
     if (membro === null){
-      res.sendStatus(404);
+      //TODO usar o tratamento de erro com next(erro)
+      return res.status(404).json('Nao encontrado');
+      // var erro = new Error('Not Found');
+      // erro.status = 404;
+      // next(erro);
     }
     console.log('Membro encontrado');
     res.json(membro);
