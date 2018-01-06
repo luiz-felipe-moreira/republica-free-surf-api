@@ -73,6 +73,10 @@ var membroSchema = new Schema({
     praia: {
         type: String,
         required: true
+    },
+    urlFoto: {
+        type: String,
+        required: true
     }
 }, {
     timestamps: true
