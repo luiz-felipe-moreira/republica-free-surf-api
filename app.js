@@ -50,8 +50,8 @@ aws.config.region = 'sa-east-1';
 const S3_BUCKET = (process.env.S3_BUCKET || config.s3Bucket);
 app.get('/sign-s3', (req, res) => {
   const s3 = new aws.S3();
-  const fileName = req.query['file-name'];
-  const fileType = req.query['file-type'];
+  const fileName = req.query['nomeArquivo'];
+  const fileType = req.query['tipoArquivo'];
   const s3Params = {
     Bucket: S3_BUCKET,
     Key: fileName,
