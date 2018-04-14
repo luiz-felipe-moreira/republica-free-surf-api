@@ -77,6 +77,11 @@ var membroSchema = new Schema({
     urlFoto: {
         type: String,
         required: true
+    },
+    fotoFacebook: {
+        type: Boolean,
+        //TODO alterar required para true
+        required: false
     }
 }, {
     timestamps: true
