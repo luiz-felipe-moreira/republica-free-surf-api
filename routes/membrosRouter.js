@@ -17,18 +17,22 @@ membroRouter.route('/').
   .post(function (req, res, next) {
     // 
     var membro = req.body;
-    membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(membro.id, membro.urlFoto, function (error, response) {
-      if (error) next(error);
-      membro.urlFoto = response;
-      console.log('URL retornada pelo AWS: ' + membro.urlFoto);
 
-      // Membros.create(req.body, function (err, membro) {
-      Membros.create(membro, function (err, membro) {
-        if (err) next(err);
-        console.log('Membro criado!');
-        res.json(membro);
+    if (membro.fotoFacebook) {
+      
+      membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(membro.id, membro.urlFoto, function (error, response) {
+        if (error) next(error);
+        membro.urlFoto = response;
+        console.log('URL retornada pelo AWS: ' + membro.urlFoto);
+
+        Membros.create(membro, function (err, membro) {
+          if (err) next(err);
+          console.log('Membro criado!');
+          res.json(membro);
+        });
       });
-    });
+      
+    }
   });
 
 membroRouter.route('/:membroId').
