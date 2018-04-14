@@ -19,7 +19,9 @@ membroRouter.route('/').
     var membro = req.body;
 
     if (membro.fotoFacebook) {
-      
+
+      console.log('URL da foto: ' + membro.urlFoto);
+
       membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(membro.id, membro.urlFoto, function (error, response) {
         if (error) next(error);
         membro.urlFoto = response;
@@ -31,7 +33,13 @@ membroRouter.route('/').
           res.json(membro);
         });
       });
-      
+
+    } else {
+      Membros.create(membro, function (err, membro) {
+        if (err) next(err);
+        console.log('Membro criado!');
+        res.json(membro);
+      });
     }
   });
 
