@@ -44,7 +44,7 @@ membroRouter.route('/').
           return next(err);
         }
         console.log('Membro criado!');
-        res.json(membro);
+        res.status(201).json(membro);
       });
     }
   });
