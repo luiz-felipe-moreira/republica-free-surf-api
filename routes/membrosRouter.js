@@ -9,7 +9,7 @@ membroRouter.use(bodyParser.json());
 membroRouter.route('/').
   get(function (req, res, next) {
     Membros.find(function (err, membros) {
-      if (err) next(err);
+      if (err) return next(err);
       res.json(membros);
     });
   })
@@ -28,7 +28,10 @@ membroRouter.route('/').
         console.log('URL retornada pelo AWS: ' + membro.urlFoto);
 
         Membros.create(membro, function (err, membro) {
-          if (err) next(err);
+          if (err) {
+            console.error('Erro na criação do membro.')
+            return next(err);
+          }
           console.log('Membro criado!');
           res.json(membro);
         });
@@ -36,7 +39,10 @@ membroRouter.route('/').
 
     } else {
       Membros.create(membro, function (err, membro) {
-        if (err) next(err);
+        if (err) {
+          console.error('Erro na criação do membro.');
+          return next(err);
+        }
         console.log('Membro criado!');
         res.json(membro);
       });
@@ -45,17 +51,14 @@ membroRouter.route('/').
 
 membroRouter.route('/:membroId').
   get(function (req, res, next) {
-    // Membros.findById(req.params.membroId, function (err, membro) {
     Membros.findOne({ 'id': req.params.membroId }, function (err, membro) {
       if (err) next(err);
 
       console.log('Membro: ' + membro);
       if (membro === null) {
-        //TODO usar o tratamento de erro com next(erro)
-        return res.status(404).json('Nao encontrado');
-        // var erro = new Error('Not Found');
-        // erro.status = 404;
-        // next(erro);
+        var erro = new Error('Not Found');
+        erro.status = 404;
+        return next(erro);
       }
       console.log('Membro encontrado');
       res.json(membro);
