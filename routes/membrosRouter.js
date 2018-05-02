@@ -52,7 +52,7 @@ membroRouter.route('/').
 membroRouter.route('/:membroId').
   get(function (req, res, next) {
     Membros.findOne({ 'id': req.params.membroId }, function (err, membro) {
-      if (err) next(err);
+      if (err) return next(err);
 
       console.log('Membro: ' + membro);
       if (membro === null) {
@@ -61,6 +61,18 @@ membroRouter.route('/:membroId').
         return next(erro);
       }
       console.log('Membro encontrado');
+      res.json(membro);
+    });
+  })
+  .put(function (req, res, next) {
+    Membros.findOneAndUpdate({ 'id': req.params.membroId }, { $set: req.body }, { new: true }, function (err, membro) {
+      if (err) return next(err);
+      if (membro === null) {
+        var erro = new Error('Not Found');
+        erro.status = 404;
+        return next(erro);
+      }
+      console.log('Membro atualizado!');
       res.json(membro);
     });
   });
