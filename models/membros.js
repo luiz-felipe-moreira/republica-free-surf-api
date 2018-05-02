@@ -80,8 +80,13 @@ var membroSchema = new Schema({
     },
     fotoFacebook: {
         type: Boolean,
-        //TODO alterar required para true
-        required: false
+        required: true
+    },
+    aprovado: {
+        type: Boolean
+    },
+    admin: {
+        type: Boolean
     }
 }, {
     timestamps: true
