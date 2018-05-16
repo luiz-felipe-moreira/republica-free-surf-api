@@ -14,7 +14,7 @@ mongoose.connect((process.env.MONGODB_URI || config.mongoUrl), {
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.log("Connected correctly to database server");
+  console.log("Connected correctly to database server");
 });
 
 var index = require('./routes/index');
@@ -29,6 +29,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // enable cors
 var corsOption = {
+  //TODO essa configuração deve ser modificada para produção, pois origin true permite acesso de qualquer origem
   origin: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
@@ -54,7 +55,7 @@ app.get('/sign-s3', (req, res) => {
   };
 
   s3.getSignedUrl('putObject', s3Params, (err, data) => {
-    if(err){
+    if (err) {
       console.log(err);
       return res.end();
     }
@@ -68,7 +69,7 @@ app.get('/sign-s3', (req, res) => {
 });
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -78,7 +79,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
+  app.use(function (err, req, res, next) {
     if (err.name == 'ValidationError') {
       err.status = 400;
     }
@@ -93,7 +94,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   if (err.name == 'ValidationError') {
     err.status = 400;
   }
