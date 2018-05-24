@@ -3,6 +3,8 @@ var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var passport = require('passport');
+var FacebookTokenStrategy = require('passport-facebook-token');
 var mongoose = require('mongoose');
 var aws = require('aws-sdk');
 
@@ -36,6 +38,18 @@ var corsOption = {
   exposedHeaders: ['x-auth-token']
 };
 app.use(cors(corsOption));
+
+var FacebookTokenStrategy = require('passport-facebook-token');
+
+passport.use(new FacebookTokenStrategy({
+  clientID: (process.env.FACEBOOK_APP_ID || config.facebookAppId),
+  clientSecret: (process.env.FACEBOOK_APP_SECRET || config.facebookAppSecret)
+},
+function (accessToken, refreshToken, profile, done) {
+  // User.upsertFbUser(accessToken, refreshToken, profile, function(err, user) {
+    return done(err, user);
+  // });
+}));
 
 app.use('/', index);
 app.use('/users', users);
