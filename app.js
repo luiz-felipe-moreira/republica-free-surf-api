@@ -42,10 +42,12 @@ app.use(cors(corsOption));
 var FacebookTokenStrategy = require('passport-facebook-token');
 
 passport.use(new FacebookTokenStrategy({
+  //TODO retirar referencias ao arquivo config e usar somente o arquivo .env, possivelmente com comando $: env $(cat .env) nodemon app.js
   clientID: (process.env.FACEBOOK_APP_ID || config.facebookAppId),
   clientSecret: (process.env.FACEBOOK_APP_SECRET || config.facebookAppSecret)
 },
 function (accessToken, refreshToken, profile, done) {
+  //TODO implementar
   // User.upsertFbUser(accessToken, refreshToken, profile, function(err, user) {
     return done(err, user);
   // });
