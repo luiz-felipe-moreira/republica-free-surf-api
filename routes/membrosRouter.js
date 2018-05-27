@@ -1,13 +1,25 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var uploadS3 = require('../integration/uploadS3');
-
+var expressJwt = require('express-jwt');
 var Membros = require('../models/membros');
 var membroRouter = express.Router();
+
+var authenticate = expressJwt({
+  secret: process.env.JWT_SECRET,
+  requestProperty: 'auth',
+  getToken: function(req) {
+    if (req.headers['x-auth-token']) {
+      return req.headers['x-auth-token'];
+    }
+    return null;
+  }
+});
+
 membroRouter.use(bodyParser.json());
 
 membroRouter.route('/').
-  get(function (req, res, next) {
+  get(authenticate, function (req, res, next) {
     Membros.find(function (err, membros) {
       if (err) return next(err);
       res.json(membros);
@@ -64,7 +76,7 @@ membroRouter.route('/:membroId').
       res.json(membro);
     });
   })
-  .put(function (req, res, next) {
+  .put(authenticate, function (req, res, next) {
     Membros.findOneAndUpdate({ 'id': req.params.membroId }, { $set: req.body }, { new: true }, function (err, membro) {
       if (err) return next(err);
       if (membro === null) {
