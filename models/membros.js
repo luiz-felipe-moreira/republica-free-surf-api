@@ -83,10 +83,12 @@ var membroSchema = new Schema({
         required: true
     },
     aprovado: {
-        type: Boolean
+        type: Boolean,
+        default: false
     },
     admin: {
-        type: Boolean
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true
