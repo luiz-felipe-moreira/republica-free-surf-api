@@ -7,11 +7,9 @@ var passport = require('passport');
 var FacebookTokenStrategy = require('passport-facebook-token');
 var mongoose = require('mongoose');
 var aws = require('aws-sdk');
-const normalizePort = require('normalize-port');
+var normalizePort = require('normalize-port');
 
-var config = require('./config');
-
-mongoose.connect((process.env.MONGODB_URI || config.mongoUrl), {
+mongoose.connect((process.env.MONGODB_URI), {
   useMongoClient: true
 });
 var db = mongoose.connection;
@@ -20,9 +18,8 @@ db.once('open', function () {
   console.log("Connected correctly to database server");
 });
 
-var index = require('./routes/index');
-var users = require('./routes/users');
 var membros = require('./routes/membrosRouter');
+var login = require('./routes/loginRouter');
 
 var app = express();
 
@@ -45,25 +42,27 @@ var corsOption = {
 app.use(cors(corsOption));
 
 var FacebookTokenStrategy = require('passport-facebook-token');
+var Membros = require('./models/membros');
 
 passport.use(new FacebookTokenStrategy({
-  //TODO retirar referencias ao arquivo config e usar somente o arquivo .env, possivelmente com comando $: env $(cat .env) nodemon app.js
-  clientID: (process.env.FACEBOOK_APP_ID || config.facebookAppId),
-  clientSecret: (process.env.FACEBOOK_APP_SECRET || config.facebookAppSecret)
+  clientID: (process.env.FACEBOOK_APP_ID),
+  clientSecret: (process.env.FACEBOOK_APP_SECRET)
 },
-function (accessToken, refreshToken, profile, done) {
-  //TODO implementar
-  // User.upsertFbUser(accessToken, refreshToken, profile, function(err, user) {
-    return done(err, user);
-  // });
-}));
+  function (accessToken, refreshToken, profile, done) {
+    Membros.findOne({ 'id': profile.id }, function (err, membro) {
+      if (membro === null) {
+        console.log('Membro não encontrado na autenticação');
+      }
+      console.log('Membro encontrado na autenticação');
+      return done(err, membro);
+    });
+  }));
 
-app.use('/', index);
-app.use('/users', users);
+app.use('/login', login);
 app.use('/membros', membros);
 
 aws.config.region = 'sa-east-1';
-const S3_BUCKET = (process.env.S3_BUCKET || config.s3Bucket);
+const S3_BUCKET = (process.env.S3_BUCKET);
 app.get('/sign-s3', (req, res) => {
   const s3 = new aws.S3();
   const fileName = req.query['nomeArquivo'];
