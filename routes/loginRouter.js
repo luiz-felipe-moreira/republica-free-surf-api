@@ -32,7 +32,9 @@ loginRouter.route('/').
 
         // prepare token for API
         req.auth = {
-            id: req.user.id
+            id: req.user.id,
+            admin: req.user.admin,
+            aprovado: req.user.aprovado
         };
 
         next();
