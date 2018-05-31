@@ -20,7 +20,7 @@ membroRouter.use(bodyParser.json());
 
 membroRouter.route('/').
   get(authenticate, function (req, res, next) {
-    Membros.find(function (err, membros) {
+    Membros.find(req.query, function (err, membros) {
       if (err) return next(err);
       res.json(membros);
     });
