@@ -7,7 +7,9 @@ var loginRouter = express.Router();
 
 var createToken = function(auth) {
     return jwt.sign({
-      id: auth.id
+      id: auth.id,
+      admin: auth.admin,
+      aprovado: auth.aprovado
     }, process.env.JWT_SECRET,
     {
       expiresIn: 60 * 120
