@@ -5,41 +5,42 @@ var expressJwt = require('express-jwt');
 
 var loginRouter = express.Router();
 
-var createToken = function(auth) {
-    return jwt.sign({
-      id: auth.id,
-      admin: auth.admin,
-      aprovado: auth.aprovado
-    }, process.env.JWT_SECRET,
+var createToken = function (auth) {
+  return jwt.sign({
+    id: auth.id,
+    aprovado: auth.aprovado,
+    admin: auth.admin
+  },
+    process.env.JWT_SECRET,
     {
       expiresIn: 60 * 120
     });
-  };
-  
-  var generateToken = function (req, res, next) {
-    req.token = createToken(req.auth);
-    next();
-  };
-  
-  var sendToken = function (req, res) {
-    res.setHeader('x-auth-token', req.token);
-    res.status(200).send(req.auth);
-  };
+};
+
+var generateToken = function (req, res, next) {
+  req.token = createToken(req.auth);
+  next();
+};
+
+var sendToken = function (req, res) {
+  res.setHeader('x-auth-token', req.token);
+  res.status(200).send(req.auth);
+};
 
 loginRouter.route('/').
-    post(passport.authenticate('facebook-token', { session: false }), function (req, res, next) {
-        if (!req.user) {
-            return res.send(401, 'User Not Authenticated');
-        }
+  post(passport.authenticate('facebook-token', { session: false }), function (req, res, next) {
+    if (!req.user) {
+      return res.send(401, 'User Not Authenticated');
+    }
 
-        // prepare token for API
-        req.auth = {
-            id: req.user.id,
-            admin: req.user.admin,
-            aprovado: req.user.aprovado
-        };
+    // prepare token for API
+    req.auth = {
+      id: req.user.id,
+      aprovado: req.user.aprovado,
+      admin: req.user.admin
+    };
 
-        next();
-    }, generateToken, sendToken);
+    next();
+  }, generateToken, sendToken);
 
 module.exports = loginRouter;
