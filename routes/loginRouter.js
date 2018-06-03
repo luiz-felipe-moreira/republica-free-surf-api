@@ -17,30 +17,22 @@ var createToken = function (auth) {
     });
 };
 
-var generateToken = function (req, res, next) {
-  req.token = createToken(req.auth);
-  next();
-};
-
-var sendToken = function (req, res) {
-  res.setHeader('x-auth-token', req.token);
-  res.status(200).send(req.auth);
-};
-
 loginRouter.route('/').
   post(passport.authenticate('facebook-token', { session: false }), function (req, res, next) {
+   
     if (!req.user) {
       return res.send(401, 'User Not Authenticated');
     }
 
-    // prepare token for API
     req.auth = {
       id: req.user.id,
       aprovado: req.user.aprovado,
       admin: req.user.admin
     };
 
-    next();
-  }, generateToken, sendToken);
+    req.auth.token = createToken(req.auth);
+
+    res.status(200).send(req.auth);
+  });
 
 module.exports = loginRouter;

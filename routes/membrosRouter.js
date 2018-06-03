@@ -8,7 +8,7 @@ var membroRouter = express.Router();
 var authenticate = expressJwt({
   secret: process.env.JWT_SECRET,
   requestProperty: 'auth',
-  getToken: function(req) {
+  getToken: function (req) {
     if (req.headers['x-auth-token']) {
       return req.headers['x-auth-token'];
     }
@@ -20,10 +20,16 @@ membroRouter.use(bodyParser.json());
 
 membroRouter.route('/').
   get(authenticate, function (req, res, next) {
-    Membros.find(req.query, function (err, membros) {
-      if (err) return next(err);
-      res.json(membros);
-    });
+    if (req.auth.admin) {
+      Membros.find(req.query, function (err, membros) {
+        if (err) return next(err);
+        res.json(membros);
+      });
+    } else {
+      var err = new Error('You are not authorized to access this resource');
+      err.status = 403;
+      return next(err);
+    }
   })
 
   .post(function (req, res, next) {
