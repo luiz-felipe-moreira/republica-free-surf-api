@@ -13,37 +13,37 @@ var membroSchema = new Schema({
     },
     nome: {
       type: String,
-      required: true
+      required: this.registrado
     },
     apelido: {
       type: String
     },
     telefoneCelular: {
         type: String,
-        required: true
+        required: this.registrado
     },
     telefoneFixo: {
         type: String
     },
     profissao: {
         type: String,
-        required: true
+        required: this.registrado
     },
     dataNascimento: {
         type: Date,
-        required: true
+        required: this.registrado
     },
     sexo: {
         type: String,
-        required: true
+        required: this.registrado
     },
     grupoSanguineo: {
         type: String,
-        required: true
+        required: this.registrado
     },
     fatorRH: {
         type: String,
-        required: true
+        required: this.registrado
     },
     alergias: {
         type: String
@@ -53,38 +53,42 @@ var membroSchema = new Schema({
     },
     nomeContatoEmergencia: {
         type: String,
-        required: true
+        required: this.registrado
     },
     telefoneContatoEmergencia: {
         type: String,
-        required: true
+        required: this.registrado
     },
     nivel: {
         type: String,
-        required: true
+        required: this.registrado
     },
 
     tiposPrancha: [String],
 
     anoComecoSurfe: {
         type: Number,
-        required: true
+        required: this.registrado
     },
     praia: {
         type: String,
-        required: true
+        required: this.registrado
     },
     urlFoto: {
         type: String,
-        required: true
+        required: this.registrado
     },
     fotoFacebook: {
         type: Boolean,
-        required: true
+        required: this.registrado
+    },
+    registrado: {
+        type: Boolean,
+        default: false
     },
     aprovado: {
         type: Boolean,
-        default: false
+        default: false  
     },
     admin: {
         type: Boolean,
@@ -94,9 +98,6 @@ var membroSchema = new Schema({
     timestamps: true
 });
 
-// the schema is useless so far
-// we need to create a model using it
 var Membros = mongoose.model('Membro', membroSchema);
 
-// make this available to our Node applications
 module.exports = Membros;
