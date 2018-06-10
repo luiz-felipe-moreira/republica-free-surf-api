@@ -20,6 +20,7 @@ membroRouter.use(bodyParser.json());
 
 membroRouter.route('/').
   get(authenticate, function (req, res, next) {
+    //somente os administradores estão autorizados a resuperar a lista de membros
     if (req.auth.admin) {
       Membros.find(req.query, function (err, membros) {
         if (err) return next(err);
@@ -32,8 +33,8 @@ membroRouter.route('/').
     }
   })
 
-  .post(function (req, res, next) {
-    // 
+  /* .post(function (req, res, next) {
+    
     var membro = req.body;
 
     if (membro.fotoFacebook) {
@@ -65,34 +66,73 @@ membroRouter.route('/').
         res.status(201).json(membro);
       });
     }
-  });
+  }); */
 
 membroRouter.route('/:membroId').
-  get(function (req, res, next) {
+  get(authenticate, function (req, res, next) {
+
+    // somente o próprio usuário ou um usuário administrador estão autorizados a alterar seus dados
+    if ((req.auth.id !== req.params.membroId) && (!req.auth.admin)){
+      var err = new Error('You are not authorized to access this resource');
+      err.status = 403;
+      return next(err);
+    }
+
     Membros.findOne({ 'id': req.params.membroId }, function (err, membro) {
       if (err) return next(err);
 
-      console.log('Membro: ' + membro);
       if (membro === null) {
         var erro = new Error('Not Found');
         erro.status = 404;
         return next(erro);
       }
-      console.log('Membro encontrado');
+      
       res.json(membro);
     });
   })
   .put(authenticate, function (req, res, next) {
-    Membros.findOneAndUpdate({ 'id': req.params.membroId }, { $set: req.body }, { new: true }, function (err, membro) {
-      if (err) return next(err);
-      if (membro === null) {
-        var erro = new Error('Not Found');
-        erro.status = 404;
-        return next(erro);
-      }
-      console.log('Membro atualizado!');
-      res.json(membro);
-    });
+    
+    // somente o próprio usuário está autorizado a alterar seus dados
+    if (req.auth.id !== req.params.membroId){
+      var err = new Error('You are not authorized to access this resource');
+      err.status = 403;
+      return next(err);
+    }
+
+    var membro = req.body;
+
+    if (membro.fotoFacebook) {
+
+      console.log('URL da foto: ' + membro.urlFoto);
+
+      membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(req.params.membroId, membro.urlFoto, function (error, response) {
+        if (error) next(error);
+        membro.urlFoto = response;
+        console.log('URL retornada pelo AWS: ' + membro.urlFoto);
+
+        Membros.findOneAndUpdate({ 'id': req.params.membroId }, { $set: membro }, { new: true }, function (err, membroAtualizado) {
+          if (err) return next(err);
+          if (membroAtualizado === null) {
+            var erro = new Error('Not Found');
+            erro.status = 404;
+            return next(erro);
+          }
+          console.log('Membro atualizado!');
+          res.json(membroAtualizado);
+        });
+      });
+    } else {
+      Membros.findOneAndUpdate({ 'id': req.params.membroId }, { $set: membro }, { new: true }, function (err, membroAtualizado) {
+        if (err) return next(err);
+        if (membroAtualizado === null) {
+          var erro = new Error('Not Found');
+          erro.status = 404;
+          return next(erro);
+        }
+        console.log('Membro atualizado!');
+        res.json(membroAtualizado);
+      });
+    }
   });
 
 module.exports = membroRouter;
