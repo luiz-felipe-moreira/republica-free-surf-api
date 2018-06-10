@@ -8,6 +8,7 @@ var loginRouter = express.Router();
 var createToken = function (auth) {
   return jwt.sign({
     id: auth.id,
+    registrado: auth.registrado,
     aprovado: auth.aprovado,
     admin: auth.admin
   },
@@ -26,6 +27,7 @@ loginRouter.route('/').
 
     req.auth = {
       id: req.user.id,
+      registrado: req.user.registrado,
       aprovado: req.user.aprovado,
       admin: req.user.admin
     };

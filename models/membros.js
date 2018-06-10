@@ -12,38 +12,38 @@ var membroSchema = new Schema({
         required: true
     },
     nome: {
-      type: String,
-      required: this.registrado
+        type: String,
+        required: function () { return this.registrado; }
     },
     apelido: {
-      type: String
+        type: String
     },
     telefoneCelular: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     telefoneFixo: {
         type: String
     },
     profissao: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     dataNascimento: {
         type: Date,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     sexo: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     grupoSanguineo: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     fatorRH: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     alergias: {
         type: String
@@ -53,34 +53,34 @@ var membroSchema = new Schema({
     },
     nomeContatoEmergencia: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     telefoneContatoEmergencia: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     nivel: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
 
     tiposPrancha: [String],
 
     anoComecoSurfe: {
         type: Number,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     praia: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     urlFoto: {
         type: String,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     fotoFacebook: {
         type: Boolean,
-        required: this.registrado
+        required: function () { return this.registrado; }
     },
     registrado: {
         type: Boolean,
@@ -88,15 +88,15 @@ var membroSchema = new Schema({
     },
     aprovado: {
         type: Boolean,
-        default: false  
+        default: false
     },
     admin: {
         type: Boolean,
         default: false
     }
 }, {
-    timestamps: true
-});
+        timestamps: true
+    });
 
 var Membros = mongoose.model('Membro', membroSchema);
 

@@ -51,10 +51,25 @@ passport.use(new FacebookTokenStrategy({
   function (accessToken, refreshToken, profile, done) {
     Membros.findOne({ 'id': profile.id }, function (err, membro) {
       if (membro === null) {
-        console.log('Membro não encontrado na autenticação');
+        
+        console.log('Membro não encontrado na autenticação. Criando novo membro...');
+
+        var novoMembro = {
+          id: profile.id,
+          email: profile.emails[0].value,
+          registrado: false
+        };
+
+        Membros.create(novoMembro,function (error, savedUser) {
+          if (error) {
+            console.log(error);
+          }
+          return done(error, savedUser);
+        });
+      } else {
+        console.log('Membro encontrado na autenticação');
+        return done(err, membro);
       }
-      console.log('Membro encontrado na autenticação');
-      return done(err, membro);
     });
   }));
 
