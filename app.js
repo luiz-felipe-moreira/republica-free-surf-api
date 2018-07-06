@@ -51,7 +51,7 @@ passport.use(new FacebookTokenStrategy({
   function (accessToken, refreshToken, profile, done) {
     Membros.findOne({ 'id': profile.id }, function (err, membro) {
       if (membro === null) {
-        
+
         console.log('Membro não encontrado na autenticação. Criando novo membro...');
 
         var novoMembro = {
@@ -60,7 +60,7 @@ passport.use(new FacebookTokenStrategy({
           registrado: false
         };
 
-        Membros.create(novoMembro,function (error, savedUser) {
+        Membros.create(novoMembro, function (error, savedUser) {
           if (error) {
             console.log(error);
           }
@@ -116,7 +116,11 @@ app.use(function (req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function (err, req, res, next) {
     if (err.name == 'ValidationError') {
+      //se for erro de validação disparado pelo mongoose
       err.status = 400;
+    } else if (err.oauthError) {
+      // se for erro disparado pelo passport-facebook-token na consulta ao Facebook para autenticacao
+      err.status = err.oauthError.statusCode
     }
     res.status(err.status || 500);
     res.json({
@@ -130,8 +134,13 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
+
   if (err.name == 'ValidationError') {
+    // se for erro de validação disparado pelo mongoose
     err.status = 400;
+  } else if (err.oauthError) {
+    // se for erro disparado pelo passport-facebook-token na consulta ao Facebook para autenticacao
+    err.status = err.oauthError.statusCode
   }
   res.status(err.status || 500);
   res.json({
