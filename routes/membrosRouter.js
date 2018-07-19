@@ -4,10 +4,12 @@ var uploadS3 = require('../integration/uploadS3');
 var expressJwt = require('express-jwt');
 var Membros = require('../models/membros');
 var membroRouter = express.Router();
+var verify = require('./verify');
 
 var authenticate = expressJwt({
   secret: process.env.JWT_SECRET,
   requestProperty: 'auth',
+  credentialsRequired: false,
   getToken: function (req) {
     if (req.headers['x-auth-token']) {
       return req.headers['x-auth-token'];
@@ -19,60 +21,53 @@ var authenticate = expressJwt({
 membroRouter.use(bodyParser.json());
 
 membroRouter.route('/').
-  get(authenticate, function (req, res, next) {
-    //somente os administradores estão autorizados a resuperar a lista de membros
-    if (req.auth.admin) {
-      Membros.find(req.query, function (err, membros) {
-        if (err) return next(err);
-        res.json(membros);
-      });
-    } else {
-      var err = new Error('You are not authorized to access this resource');
-      err.status = 403;
-      return next(err);
-    }
+  get(authenticate, verify.verifyAdmin, function (req, res, next) {
+    Membros.find(req.query, function (err, membros) {
+      if (err) return next(err);
+      res.json(membros);
+    });
   })
 
-  /* .post(function (req, res, next) {
-    
-    var membro = req.body;
+/* .post(function (req, res, next) {
+  
+  var membro = req.body;
 
-    if (membro.fotoFacebook) {
+  if (membro.fotoFacebook) {
 
-      console.log('URL da foto: ' + membro.urlFoto);
+    console.log('URL da foto: ' + membro.urlFoto);
 
-      membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(membro.id, membro.urlFoto, function (error, response) {
-        if (error) next(error);
-        membro.urlFoto = response;
-        console.log('URL retornada pelo AWS: ' + membro.urlFoto);
+    membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(membro.id, membro.urlFoto, function (error, response) {
+      if (error) next(error);
+      membro.urlFoto = response;
+      console.log('URL retornada pelo AWS: ' + membro.urlFoto);
 
-        Membros.create(membro, function (err, membro) {
-          if (err) {
-            console.error('Erro na criação do membro.')
-            return next(err);
-          }
-          console.log('Membro criado!');
-          res.json(membro);
-        });
-      });
-
-    } else {
       Membros.create(membro, function (err, membro) {
         if (err) {
-          console.error('Erro na criação do membro.');
+          console.error('Erro na criação do membro.')
           return next(err);
         }
         console.log('Membro criado!');
-        res.status(201).json(membro);
+        res.json(membro);
       });
-    }
-  }); */
+    });
+
+  } else {
+    Membros.create(membro, function (err, membro) {
+      if (err) {
+        console.error('Erro na criação do membro.');
+        return next(err);
+      }
+      console.log('Membro criado!');
+      res.status(201).json(membro);
+    });
+  }
+}); */
 
 membroRouter.route('/:membroId').
   get(authenticate, function (req, res, next) {
 
     // somente o próprio usuário ou um usuário administrador estão autorizados a alterar seus dados
-    if ((req.auth.id !== req.params.membroId) && (!req.auth.admin)){
+    if ((req.auth.id !== req.params.membroId) && (!req.auth.admin)) {
       var err = new Error('You are not authorized to access this resource');
       err.status = 403;
       return next(err);
@@ -86,14 +81,14 @@ membroRouter.route('/:membroId').
         erro.status = 404;
         return next(erro);
       }
-      
+
       res.json(membro);
     });
   })
   .put(authenticate, function (req, res, next) {
-    
+
     // somente o próprio usuário está autorizado a alterar seus dados
-    if (req.auth.id !== req.params.membroId){
+    if (req.auth.id !== req.params.membroId) {
       var err = new Error('You are not authorized to access this resource');
       err.status = 403;
       return next(err);
