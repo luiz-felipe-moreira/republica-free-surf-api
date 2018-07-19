@@ -6,10 +6,12 @@ var Membros = require('../models/membros');
 var membroRouter = express.Router();
 var verify = require('./verify');
 
+var authenticationRequired = (process.env.NODE_ENV === 'development' ? false : true);
+
 var authenticate = expressJwt({
   secret: process.env.JWT_SECRET,
   requestProperty: 'auth',
-  credentialsRequired: false,
+  credentialsRequired: authenticationRequired,
   getToken: function (req) {
     if (req.headers['x-auth-token']) {
       return req.headers['x-auth-token'];
