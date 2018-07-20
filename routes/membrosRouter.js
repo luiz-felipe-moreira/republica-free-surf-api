@@ -4,26 +4,12 @@ var uploadS3 = require('../integration/uploadS3');
 var expressJwt = require('express-jwt');
 var Membros = require('../models/membros');
 var membroRouter = express.Router();
-var verify = require('./verify');
-
-var authenticationRequired = (process.env.NODE_ENV === 'development' ? false : true);
-
-var authenticate = expressJwt({
-  secret: process.env.JWT_SECRET,
-  requestProperty: 'auth',
-  credentialsRequired: authenticationRequired,
-  getToken: function (req) {
-    if (req.headers['x-auth-token']) {
-      return req.headers['x-auth-token'];
-    }
-    return null;
-  }
-});
+var security = require('./security');
 
 membroRouter.use(bodyParser.json());
 
 membroRouter.route('/').
-  get(authenticate, verify.verifyAdmin, function (req, res, next) {
+  get(security.authenticate, security.verifyAdmin, function (req, res, next) {
     Membros.find(req.query, function (err, membros) {
       if (err) return next(err);
       res.json(membros);
@@ -66,7 +52,7 @@ membroRouter.route('/').
 }); */
 
 membroRouter.route('/:membroId').
-  get(authenticate, function (req, res, next) {
+  get(security.authenticate, function (req, res, next) {
 
     // somente o próprio usuário ou um usuário administrador estão autorizados a alterar seus dados
     if ((req.auth.id !== req.params.membroId) && (!req.auth.admin)) {
@@ -87,7 +73,7 @@ membroRouter.route('/:membroId').
       res.json(membro);
     });
   })
-  .put(authenticate, function (req, res, next) {
+  .put(security.authenticate, function (req, res, next) {
 
     // somente o próprio usuário está autorizado a alterar seus dados
     if (req.auth.id !== req.params.membroId) {
