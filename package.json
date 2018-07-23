@@ -6,6 +6,9 @@
     "start": "nf start",
     "devstart": "nodemon --exec 'nf start'"
   },
+  "engines": {
+    "node": "8.11.3"
+  },
   "dependencies": {
     "aws-sdk": "^2.177.0",
     "body-parser": "~1.17.1",
