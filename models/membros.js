@@ -93,6 +93,10 @@ var membroSchema = new Schema({
     admin: {
         type: Boolean,
         default: false
+    },
+    status: {
+        type: String,
+        default: 'Cadastro pendente'
     }
 }, {
         timestamps: true
