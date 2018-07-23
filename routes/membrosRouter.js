@@ -1,58 +1,57 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var uploadS3 = require('../integration/uploadS3');
-var expressJwt = require('express-jwt');
 var Membros = require('../models/membros');
-var membroRouter = express.Router();
 var security = require('./security');
+var membroRouter = express.Router();
 
 membroRouter.use(bodyParser.json());
 
-membroRouter.route('/').
-  get(security.authenticate, security.verifyAdmin, function (req, res, next) {
+membroRouter.route('/')
+  .get(security.authenticate, security.verifyAdmin, function (req, res, next) {
     Membros.find(req.query, function (err, membros) {
       if (err) return next(err);
       res.json(membros);
     });
   })
 
-/* .post(function (req, res, next) {
-  
-  var membro = req.body;
+  .post(security.authenticate, function (req, res, next) {
 
-  if (membro.fotoFacebook) {
+    var membro = req.body;
 
-    console.log('URL da foto: ' + membro.urlFoto);
+    if (membro.fotoFacebook) {
 
-    membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(membro.id, membro.urlFoto, function (error, response) {
-      if (error) next(error);
-      membro.urlFoto = response;
-      console.log('URL retornada pelo AWS: ' + membro.urlFoto);
+      console.log('URL da foto: ' + membro.urlFoto);
 
+      membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(membro.id, membro.urlFoto, function (error, response) {
+        if (error) next(error);
+        membro.urlFoto = response;
+        console.log('URL retornada pelo AWS: ' + membro.urlFoto);
+
+        Membros.create(membro, function (err, membro) {
+          if (err) {
+            console.error('Erro na criação do membro.')
+            return next(err);
+          }
+          console.log('Membro criado!');
+          res.json(membro);
+        });
+      });
+
+    } else {
       Membros.create(membro, function (err, membro) {
         if (err) {
-          console.error('Erro na criação do membro.')
+          console.error('Erro na criação do membro.');
           return next(err);
         }
         console.log('Membro criado!');
-        res.json(membro);
+        res.status(201).json(membro);
       });
-    });
+    }
+  });
 
-  } else {
-    Membros.create(membro, function (err, membro) {
-      if (err) {
-        console.error('Erro na criação do membro.');
-        return next(err);
-      }
-      console.log('Membro criado!');
-      res.status(201).json(membro);
-    });
-  }
-}); */
-
-membroRouter.route('/:membroId').
-  get(security.authenticate, function (req, res, next) {
+membroRouter.route('/:membroId')
+  .get(security.authenticate, function (req, res, next) {
 
     // somente o próprio usuário ou um usuário administrador estão autorizados a alterar seus dados
     if ((req.auth.id !== req.params.membroId) && (!req.auth.admin)) {
@@ -61,7 +60,9 @@ membroRouter.route('/:membroId').
       return next(err);
     }
 
-    Membros.findOne({ 'id': req.params.membroId }, function (err, membro) {
+    Membros.findOne({
+      'id': req.params.membroId
+    }, function (err, membro) {
       if (err) return next(err);
 
       if (membro === null) {
@@ -73,6 +74,7 @@ membroRouter.route('/:membroId').
       res.json(membro);
     });
   })
+
   .put(security.authenticate, function (req, res, next) {
 
     // somente o próprio usuário está autorizado a alterar seus dados
@@ -93,7 +95,13 @@ membroRouter.route('/:membroId').
         membro.urlFoto = response;
         console.log('URL retornada pelo AWS: ' + membro.urlFoto);
 
-        Membros.findOneAndUpdate({ 'id': req.params.membroId }, { $set: membro }, { new: true }, function (err, membroAtualizado) {
+        Membros.findOneAndUpdate({
+          'id': req.params.membroId
+        }, {
+          $set: membro
+        }, {
+          new: true
+        }, function (err, membroAtualizado) {
           if (err) return next(err);
           if (membroAtualizado === null) {
             var erro = new Error('Not Found');
@@ -105,7 +113,13 @@ membroRouter.route('/:membroId').
         });
       });
     } else {
-      Membros.findOneAndUpdate({ 'id': req.params.membroId }, { $set: membro }, { new: true }, function (err, membroAtualizado) {
+      Membros.findOneAndUpdate({
+        'id': req.params.membroId
+      }, {
+        $set: membro
+      }, {
+        new: true
+      }, function (err, membroAtualizado) {
         if (err) return next(err);
         if (membroAtualizado === null) {
           var erro = new Error('Not Found');

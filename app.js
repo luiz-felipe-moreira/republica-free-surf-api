@@ -18,8 +18,9 @@ db.once('open', function () {
   console.log("Connected correctly to database server");
 });
 
-var membros = require('./routes/membrosRouter');
-var login = require('./routes/loginRouter');
+var membrosRouter = require('./routes/membrosRouter');
+var meRouter = require('./routes/meRouter');
+var loginRouter = require('./routes/loginRouter');
 
 var app = express();
 
@@ -73,8 +74,9 @@ passport.use(new FacebookTokenStrategy({
     });
   }));
 
-app.use('/login', login);
-app.use('/membros', membros);
+app.use('/login', loginRouter);
+app.use('/me', meRouter);
+app.use('/membros', membrosRouter);
 
 aws.config.region = 'sa-east-1';
 const S3_BUCKET = (process.env.S3_BUCKET);
