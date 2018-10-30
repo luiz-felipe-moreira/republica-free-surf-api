@@ -77,8 +77,8 @@ membroRouter.route('/:membroId')
 
   .put(security.authenticate, function (req, res, next) {
 
-    // somente o próprio usuário está autorizado a alterar seus dados
-    if (req.auth.id !== req.params.membroId) {
+    // somente o próprio usuário ou um administrador está autorizado a alterar seus dados
+    if ((req.auth.id !== req.params.membroId) && (!req.auth.admin)) {
       var err = new Error('You are not authorized to access this resource');
       err.status = 403;
       return next(err);
