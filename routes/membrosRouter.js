@@ -11,6 +11,11 @@ membroRouter.route('/')
   .get(security.authenticate, security.verifyAdmin, function (req, res, next) {
     Membros.find(req.query, function (err, membros) {
       if (err) return next(err);
+
+      membros = membros.filter(function (membro){
+        return (membro.status !== 'Cadastro pendente');
+        });
+        
       res.json(membros);
     });
   })
