@@ -20,12 +20,6 @@ let checkUserID = function (req, res, next) {
 meRouter.route('/')
   .get(security.authenticate, checkUserID, function (req, res, next) {
 
-/*     if (!req.auth.id) {
-      var err = new Error('Unable to get user id. The endpoint /me needs authentication even in development enviroment');
-      err.status = 401;
-      return next(err);
-    } */
-
     Membros.findOne({
       'id': req.auth.id
     }, function (err, membro) {
@@ -44,19 +38,13 @@ meRouter.route('/')
 
   .put(security.authenticate, checkUserID, function (req, res, next) {
 
-    /*   if (!req.auth.id) {
-        var err = new Error('You are not authorized to access this resource');
-        err.status = 403;
-        return next(err);
-      } */
-
     var membro = req.body;
 
     if (membro.fotoFacebook) {
 
       console.log('URL da foto: ' + membro.urlFoto);
 
-      membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(req.params.membroId, membro.urlFoto, function (error, response) {
+      membro.urlFoto = uploadS3.salvarFotoFacebookNoBucketS3(req.auth.id, membro.urlFoto, function (error, response) {
         if (error) next(error);
         membro.urlFoto = response;
         console.log('URL retornada pelo AWS: ' + membro.urlFoto);
