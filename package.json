@@ -7,7 +7,8 @@
     "devstart": "nodemon --exec 'nf start'"
   },
   "engines": {
-    "node": "8.11.3"
+    "node": "8.11.3",
+    "npm": "6.7.x"
   },
   "dependencies": {
     "aws-sdk": "^2.177.0",
