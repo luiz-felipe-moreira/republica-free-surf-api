@@ -25,7 +25,11 @@ var membroSchema = new Schema({
     telefoneFixo: {
         type: String
     },
-    profissao: {
+    numeroIdentidade: {
+        type: String,
+        required: function () { return this.registrado; }
+    },
+    orgaoEmissorIdentidade: {
         type: String,
         required: function () { return this.registrado; }
     },
