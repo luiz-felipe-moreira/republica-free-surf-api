@@ -78,6 +78,7 @@ app.use('/login', loginRouter);
 app.use('/me', meRouter);
 app.use('/membros', membrosRouter);
 
+//TODO put the AWS region in a enviroment variable
 aws.config.region = 'sa-east-1';
 const S3_BUCKET = (process.env.S3_BUCKET);
 app.get('/sign-s3', (req, res) => {
@@ -88,7 +89,7 @@ app.get('/sign-s3', (req, res) => {
     Bucket: S3_BUCKET,
     Key: fileName,
     ContentType: fileType,
-    ACL: 'public-read'
+    ACL: 'private'
   };
 
   s3.getSignedUrl('putObject', s3Params, (err, data) => {
