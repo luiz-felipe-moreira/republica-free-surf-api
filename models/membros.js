@@ -9,7 +9,7 @@ var membroSchema = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: function () { return this.registrado; }
     },
     nome: {
         type: String,
