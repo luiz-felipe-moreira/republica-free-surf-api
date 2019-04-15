@@ -7,8 +7,9 @@ AWS.config.update({ region: 'sa-east-1' });
 // Create S3 service object
 s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
+const S3_BUCKET = (process.env.S3_BUCKET);
 // call S3 to retrieve upload file to specified bucket
-var uploadParams = { Bucket: 'republica-free-surf-photos', Key: '', Body: '' };
+var uploadParams = { Bucket: S3_BUCKET, Key: '', Body: '' };
 
 var request = require('request').defaults({ encoding: null });
 
