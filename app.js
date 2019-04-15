@@ -25,8 +25,8 @@ var loginRouter = require('./routes/loginRouter');
 var app = express();
 
 //caso a aplicação esteja sendo iniciado usando o node-foreman, essa configuração de porta é ignorada, pois ele usa sempre a porta 5000
-var port = normalizePort(process.env.PORT || '5000');
-app.set('port', port);
+/* var port = normalizePort(process.env.PORT || '5000');
+app.set('port', port); */
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
