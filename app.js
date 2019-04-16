@@ -78,8 +78,7 @@ app.use('/login', loginRouter);
 app.use('/me', meRouter);
 app.use('/membros', membrosRouter);
 
-//TODO put the AWS region in a enviroment variable
-aws.config.region = 'sa-east-1';
+aws.config.region = process.env.S3_REGION;
 const S3_BUCKET = (process.env.S3_BUCKET);
 app.get('/sign-s3', (req, res) => {
   const s3 = new aws.S3();

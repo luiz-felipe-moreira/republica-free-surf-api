@@ -2,14 +2,15 @@
 // Load the AWS SDK for Node.js
 var AWS = require('aws-sdk');
 // Set the region 
-AWS.config.update({ region: 'sa-east-1' });
+const S3_BUCKET_REGION = process.env.S3_REGION;
+AWS.config.update({ region: S3_BUCKET_REGION });
 
 // Create S3 service object
 s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
-const S3_BUCKET = (process.env.S3_BUCKET);
+const S3_BUCKET_NAME = (process.env.S3_BUCKET);
 // call S3 to retrieve upload file to specified bucket
-var uploadParams = { Bucket: S3_BUCKET, Key: '', Body: '' };
+var uploadParams = { Bucket: S3_BUCKET_NAME, Key: '', Body: '' };
 
 var request = require('request').defaults({ encoding: null });
 
