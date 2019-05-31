@@ -106,6 +106,6 @@ var membroSchema = new Schema({
         timestamps: true
     });
 
-var Membros = mongoose.model('Membro', membroSchema);
+var Membro = mongoose.model('Membro', membroSchema);
 
-module.exports = Membros;
+module.exports = Membro;

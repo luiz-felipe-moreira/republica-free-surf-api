@@ -17,6 +17,11 @@ URL de conexão:
 
 https://dashboard.heroku.com/apps/republica-free-surf
 
+## Desenvolvimento
+
+Para rodar localmente execute `sudo npm start`.
+O serviço rodará na URL `https://localhost:444`.
+
 ## Deploy
 
 Na pasta raiz, após fazer todos o commits, executar o comando abaixo para fazer o deploy no heroku via git
